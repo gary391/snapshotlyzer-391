@@ -15,4 +15,4 @@ shotty uses the configuration file created by the AWS CLI.
 
 ## Running
 
-`pipenv run python shotty/shotty.py`q
+`pipenv run python shotty/shotty.py`
