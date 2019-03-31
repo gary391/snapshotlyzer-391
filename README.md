@@ -22,7 +22,7 @@ shotty uses the configuration file created by the AWS CLI.
 *project* is optional
 
 ## Example Output:
-
+```
 +---------------------+---------------+------------------+----------------+-------------------------------------------+
 |     Instance-Id     | Instance-Type | AvailabilityZone | Instance-state |              Public-DNS-Name              |
 +---------------------+---------------+------------------+----------------+-------------------------------------------+
@@ -32,7 +32,8 @@ shotty uses the configuration file created by the AWS CLI.
 | i-09251631099eb4ca0 |    t2.micro   |    us-east-1d    |    running     |  ec2-3-87-208-243.compute-1.amazonaws.com |
 | i-09d126ab12999580d |    t2.micro   |    us-east-1d    |    running     |  ec2-3-92-65-133.compute-1.amazonaws.com  |
 +---------------------+---------------+------------------+----------------+-------------------------------------------+
-
+```
+```
 +---------------------+---------------+------------------+----------------+-------------------------------------------+---------------+
 |     Instance-Id     | Instance-Type | AvailabilityZone | Instance-state |              Public-DNS-Name              |    project    |
 +---------------------+---------------+------------------+----------------+-------------------------------------------+---------------+
@@ -42,3 +43,4 @@ shotty uses the configuration file created by the AWS CLI.
 | i-09251631099eb4ca0 |    t2.micro   |    us-east-1d    |    running     |  ec2-3-87-208-243.compute-1.amazonaws.com |  snapshotter  |
 | i-09d126ab12999580d |    t2.micro   |    us-east-1d    |    running     |  ec2-3-92-65-133.compute-1.amazonaws.com  |  snapshotter  |
 +---------------------+---------------+------------------+----------------+-------------------------------------------+---------------+
+```
