@@ -1,5 +1,6 @@
 import boto3
 import click
+import botocore
 session = boto3.Session(profile_name='shotty')
 ec2 = session.resource('ec2')
 
@@ -29,7 +30,8 @@ def snapshots():
 
 @snapshots.command('list')  # decorator in python decorate/warp functions
 @click.option('--project', default=None, help="Only snapshots for project (tag Project:<name>)")
-def list_snapshots(project):
+@click.option('--all', 'list_all', default=False, is_flag=True, help="List all snapshots for each volume, not just the most recent")
+def list_snapshots(project, list_all):
     "List EC2 snapshots"
 
     instances = filter_instances(project)
@@ -44,6 +46,9 @@ def list_snapshots(project):
                     s.progress,
                     s.start_time.strftime("%c")
                 )))
+
+                if s.state == 'completed' and not list_all:  # by default lists the most recent snapshots
+                    break
     return
 
 
@@ -124,8 +129,11 @@ def stop_instances(project):
     instances = filter_instances(project)
     for i in instances:
         print("Stopping {0}...".format(i.id))
-        i.stop()
-
+        try:
+            i.stop()
+        except botocore.exceptions.ClientError as e:
+            print("Could not stop {0}. ".format(i.id) + str(e))
+            continue  # no need to continue, as the loop will continue itself.
     return
 
 
@@ -137,8 +145,11 @@ def stop_instances(project):
     instances = filter_instances(project)
     for i in instances:
         print("Starting {0}...".format(i.id))
-        i.start()
-
+        try:
+            i.start()
+        except botocore.exceptions.ClientError as e:
+            print("Could not start {0}. ".format(i.id) + str(e))
+            continue  # no need to continue, as the loop will continue itself.
     return
 
 
