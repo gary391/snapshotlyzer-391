@@ -1,7 +1,7 @@
 import boto3
 import click
 import botocore
-# import prettytable
+from prettytable import PrettyTable
 session = boto3.Session(profile_name='shotty')
 ec2 = session.resource('ec2')
 
@@ -69,16 +69,21 @@ def list_volumes(project):
     "List EC2 volumes"
 
     instances = filter_instances(project)
+    table = PrettyTable(["Volume-Id", "Instance-Id", "Volume-State",
+                         "Volume-Size", "Volume-Encryption"])
     for i in instances:
         for v in i.volumes.all():
-            print(", ". join((
-                v.id,
-                i.id,
-                v.state,
-                str(v.size) + "GiB",
-                v.encrypted and "Encrypted" or "Not Encrypted"
-            )))
-    return
+            # print(", ". join((
+            #     v.id,
+            #     i.id,
+            #     v.state,
+            #     str(v.size) + "GiB",
+            #     v.encrypted and "Encrypted" or "Not Encrypted"
+            # ))
+            # return
+            table.add_row([v.id, i.id, v.state, str(v.size) + "GiB",
+                           v.encrypted and "Encrypted" or "Not Encrypted"])
+    print(table)
 
 
 @cli.group('instances')
@@ -119,15 +124,24 @@ def list_instances(project):
     "List EC2 instances"
 
     instances = filter_instances(project)
+    table = PrettyTable(["Instance-Id", "Instance-Type", "AvailabilityZone",
+                         "Instance-state", "Public-DNS-Name", "project"])
 
     for i in instances:
         tags = {t['Key']: t['Value'] for t in i.tags or []}
+        # print(tags)
+        # print(tags.get('Project', '<no project>'))
+
         # print(i)
-        print(', '.join((i.id, i.instance_type,
-                         i.placement['AvailabilityZone'], i.state['Name'],
-                         i.public_dns_name, tags.get('Project', '<no project>')
-                         )))
-    return
+        # print(', '.join((i.id, i.instance_type,
+        #                  i.placement['AvailabilityZone'], i.state['Name'],
+        #                  i.public_dns_name, tags.get('Project', '<no project>')
+        #                  )))
+        # return
+        table.add_row([i.id, i.instance_type, i.placement['AvailabilityZone'],
+                       i.state['Name'], i.public_dns_name, tags.get('Project', '<no project>')])
+
+    print(table)
 
 
 @instances.command('stop')
