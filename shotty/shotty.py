@@ -1,7 +1,7 @@
 import boto3
 import click
 import botocore
-import prettytable
+# import prettytable
 session = boto3.Session(profile_name='shotty')
 ec2 = session.resource('ec2')
 
