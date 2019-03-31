@@ -1,6 +1,7 @@
 import boto3
 import click
 import botocore
+import prettytable
 session = boto3.Session(profile_name='shotty')
 ec2 = session.resource('ec2')
 
@@ -16,6 +17,11 @@ def filter_instances(project):
         instances = ec2.instances.all()
 
     return instances
+
+
+def has_pending_snapshot(volume):
+    snapshots = list(volume.snapshots.all())  # lists by default the most recent snapshot
+    return snapshots and snapshots[0].state == 'pending'
 
 
 @click.group()
@@ -93,6 +99,9 @@ def create_snapshots(project):
         i.stop()
         i.wait_until_stopped()
         for v in i.volumes.all():
+            if has_pending_snapshot(v):
+                print(" skipping {0}, snapshot already in progress". format(v.id))
+                continue
             print("Creating snapshots of {0}".format(v.id))
             v.create_snapshot(Description="Created by Snapshotlyzer-391")
         print("Starting...{0}".format(i.id))
